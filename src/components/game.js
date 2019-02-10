@@ -99,18 +99,19 @@ class Game extends React.Component {
         canvas.lineTo(700+cWidth, 100-cWidth+pWidth/2);
         canvas.fillStyle="red"
         canvas.fill();
-        
-
-    
-        
-
-
-        
-        
-        canvas.strokeStyle="black"
+        //lines
+        canvas.beginPath();
+        canvas.moveTo(220, 100);
+        canvas.lineTo(220, 400);
+        canvas.arc(220, 250, 50, Math.PI/2,3*Math.PI/2);
+        canvas.strokeStyle="white"
         canvas.stroke();
-        // canvas.fillStyle="red";
-        // canvas.fill();
+        //black spot
+        canvas.beginPath();
+        canvas.arc(550,250,2,0,Math.PI*2)
+        canvas.fillStyle="black"
+        canvas.fill();
+        
 
         
         //draw pockets
