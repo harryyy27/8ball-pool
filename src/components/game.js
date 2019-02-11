@@ -1,16 +1,55 @@
 import React from 'react';
 import styled from 'styled-components';
+import Ball from './Ball'
 
 class Game extends React.Component {
     state={
-
-    }
+        white: false,
+        balls: [ ]
+        }
+        
     componentDidMount = () => {
-        this.loadTable();
-    }
-    loadTable = () => {
         const table = document.getElementById('table');
         const canvas = table.getContext('2d');
+        this.loadTable(canvas);
+    }
+    rackUp =(ballWidth, canvas) => {
+        const xDev = ballWidth*Math.cos(Math.PI/6)
+        const yDev = ballWidth*1/2;
+        const ballArray = [];
+        ballArray.push(new Ball('red',550-2*xDev,250, canvas));
+        ballArray.push(new Ball('yellow', 550-xDev, 250+yDev,canvas));
+        ballArray.push(new Ball('red', 550-xDev, 250-yDev,canvas));
+        ballArray.push(new Ball('red', 550, 250+2*yDev,canvas));
+        ballArray.push(new Ball('black', 550, 250, canvas));
+        ballArray.push(new Ball('yellow',550, 250-2*yDev, canvas));
+        ballArray.push(new Ball('yellow', 550+xDev, 250+3*yDev, canvas));
+        ballArray.push(new Ball('red', 550+xDev, 250+yDev,canvas));
+        ballArray.push(new Ball('yellow', 550+xDev, 250-yDev, canvas));
+        ballArray.push(new Ball('red', 550+xDev, 250-3*yDev, canvas));
+        ballArray.push(new Ball('yellow', 550+2*xDev,250+4*yDev, canvas));
+        ballArray.push(new Ball('red', 550+2*xDev,250+2*yDev, canvas));
+        ballArray.push(new Ball('yellow', 550+2*xDev, 250, canvas))
+        ballArray.push(new Ball('red',550+2*xDev, 250-2*yDev, canvas));
+        ballArray.push(new Ball('yellow', 550+2*xDev,250-4*yDev, canvas));
+
+
+        // ballArray.push(ball1);
+        
+        for(let i=0; i<ballArray.length; i++){
+        ballArray[i].update();
+        }
+    }
+
+    // placeWhite = (event) => {
+    //     if(220-event.clientX<=50&&220-event.clientX>=0&&400-event.clientY<=50&&400-event.clientY>=-50){
+    //         const white = new Ball('white',event.clientX,event.clientY);
+            
+    //         this.state.
+    //     }
+    // }
+    loadTable = (canvas) => {
+        
         //Width of coloured balls
         const ballWidth = (50/3+25/24);
         //Distance between cushions on corner pockets
@@ -20,7 +59,7 @@ class Game extends React.Component {
         //cushion width
         const cWidth = (50-pRadius)/2;
         //draw outline of pool table
-        console.log(canvas);
+        
         canvas.beginPath();
         canvas.moveTo(pWidth+50,50);
         canvas.arc(750-pWidth, 50+pWidth,pWidth,3*Math.PI/2, 2*Math.PI);
@@ -111,9 +150,6 @@ class Game extends React.Component {
         canvas.arc(550,250,2,0,Math.PI*2)
         canvas.fillStyle="black"
         canvas.fill();
-        
-
-        
         //draw pockets
         canvas.beginPath();
         canvas.arc(100-cWidth, 100-cWidth, pWidth/2, 0,2*Math.PI);
@@ -129,6 +165,7 @@ class Game extends React.Component {
         canvas.closePath();
         canvas.fillStyle="black";
         canvas.fill();
+        this.rackUp(ballWidth, canvas);
     }
     render() {
         const Canvas = styled.canvas`
@@ -138,7 +175,12 @@ class Game extends React.Component {
     `
         return(
             <main>
-                <Canvas id="table" width="800" height="500"><h1>WHOOPS! YOUR PROVIDER CAN'T HACK IT! GET ON CHROME WITH THE REST OF HUMANITY</h1></Canvas>
+                <Canvas id="table" 
+                        width="800" 
+                        height="500" 
+                        onClick={this.state.white===false ? this.placeWhite : null}
+                        >
+                        <h1>WHOOPS! YOUR PROVIDER CAN'T HACK IT! GET ON CHROME WITH THE REST OF HUMANITY</h1></Canvas>
             </main>
         )
     }
