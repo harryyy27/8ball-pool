@@ -1,8 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
 import Ball from './Ball'
 import cue from '../img/cue.png'
-import {Canvas, Cue} from './styled'
+import {Canvas, Cue, GameWrapper} from './styled'
 
 
 class Game extends React.Component {
@@ -50,12 +49,10 @@ class Game extends React.Component {
         const table = document.getElementById('table');
         const canvas = table.getContext('2d');
         const xPos = event.clientX-(window.innerWidth-800)/2;
-        console.log(this.state.white);
         if(220-xPos<=50&&220-xPos>=0&&250-event.clientY<=50&&250-event.clientY>=-50){
-            console.log(event.clientY)
             
             const whitey = new Ball('white',xPos,event.clientY,canvas);
-            console.log(whitey.y)
+            console.log(event.clientY);
             whitey.update();
             this.setState((prevState)=>{
                return {white: !prevState.white} 
@@ -64,15 +61,6 @@ class Game extends React.Component {
                 return {balls: prevState.balls.concat([whitey])}
             })
             this.setState({whitey: whitey});
-            // let poolC = new Image();
-            // poolC.src={cue}
-            // poolC.addEventListener("load", ()=>{
-            //     console.log('yes');
-            //     canvas.drawImage(poolC,whitey.x,whitey.y, 400,250);
-                
-            // },false)
-            
-            // console.log(cue);
             }
             else{
                 canvas.fillText('PLACE WHITE IN D', 400,250)
@@ -84,11 +72,34 @@ class Game extends React.Component {
         const canvas = table.getContext('2d');
         const xPos = event.clientX-(window.innerWidth-800)/2;
         const yPos = event.clientY;
-        
-        const angle = Math.atan((this.state.whitey.y-yPos)/(this.state.whitey.x-xPos));
-        this.setState({xPos: xPos, yPos: yPos, ang: angle})
+
+        const x = this.state.whitey.x-xPos;
+        const y = this.state.whitey.y-yPos
+        this.setState({xPos: xPos, yPos: yPos, ang: this.polarCoordinates(x,y)})
 
         
+    }
+    polarCoordinates=(x,y)=>{
+        let angle =0;
+        if(x===0 && y<0){
+            angle =Math.PI/2
+        }
+        else if(x===0 && y>0){
+            angle = 3*Math.PI/2
+        }
+        else if(x>=0 && y>=0){
+            angle = Math.PI + Math.atan(y/x);
+        }
+        else if(x<=0 && y>0){
+            angle = Math.atan(y/x)
+        }
+        else if(x<=0 && y<=0){
+            angle = Math.atan(y/x)
+        }
+        else if (x>=0 && y<0){
+            angle = Math.PI +Math.atan(y/x)
+        }
+        return angle;
     }
     loadTable = (canvas) => {
         const ballWidth = (50/3+25/24);
@@ -213,30 +224,26 @@ class Game extends React.Component {
         canvas.fill();
     }
     testPos = () => {
-        console.log(Cue.innerHeight)
-        console.log(Cue.innerWidth);
     }
     render() {
         
         return(
-            <main>
+            <GameWrapper>
                 <Canvas id="table"
                         width="800" 
                         height="500" 
-                        onClick={this.state.white===false ? this.placeWhite : this.testPos}
+                        onClick={this.state.white===false ? this.placeWhite : null}
                         onMouseMove={this.state.white===true ? this.handleCue: null}
                         >
                         <h1>WHOOPS! YOUR PROVIDER CAN'T HACK IT! GET ON CHROME WITH THE REST OF HUMANITY</h1>
                 </Canvas>
                 <Cue src={this.state.white===true ? cue : null}
                      xPos={(window.innerWidth-800)/2+this.state.whitey.x-this.state.whitey.radius}
-                     yPos={this.state.whitey.y-this.state.whitey.radius-5}
-
-                    //  ang={this.state.ang}
-                    //  wxPos={this.state.whitey.x}
-                    //  wyPos={this.state.whitey.y}
+                     yPos={this.state.whitey.y-475*5/389}
+                     ang={this.state.ang}
+                     rad={this.state.whitey.radius}
                      />
-            </main>
+            </GameWrapper>
         )
     }
 }
