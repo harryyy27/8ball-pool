@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import styled, {css} from 'styled-components';
-// import Welcome from './components/welcome';
-// import Game from './components/game';
+import Welcome from './components/welcome';
+import Game from './components/game';
 import Loadable from 'react-loadable';
 // import logo from './logo.svg';
 
-const Welcome = Loadable({
-  loader: ()=> import('./components/welcome'),
-loading(){ return <h1>LOADING</h1> }
-})
-const Game = Loadable({
-  loader: ()=> import('./components/game'),
-  loading(){ return <h1>LOADING</h1>}
-})
+// const Welcome = Loadable({
+//   loader: ()=> import('./components/welcome'),
+// loading(){ return <h1>LOADING</h1> }
+// })
+// const Game = Loadable({
+//   loader: ()=> import('./components/game'),
+//   loading(){ return <h1>LOADING</h1>}
+// })
 
 class App extends Component {
   state = {

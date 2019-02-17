@@ -1,11 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 import Ball from './Ball'
+import cue from '../img/cue.png'
+import {Canvas, Cue} from './styled'
+
 
 class Game extends React.Component {
     state={
         white: false,
-        balls: [ ]
+        whitey: '',
+        balls: [ ],
+        xPos: '',
+        yPos: '',
+        ang: ''
         }
         
     componentDidMount = () => {
@@ -32,26 +39,65 @@ class Game extends React.Component {
         ballArray.push(new Ball('yellow', 550+2*xDev, 250, canvas))
         ballArray.push(new Ball('red',550+2*xDev, 250-2*yDev, canvas));
         ballArray.push(new Ball('yellow', 550+2*xDev,250-4*yDev, canvas));
-
-
-        // ballArray.push(ball1);
-        
+        this.setState((prevState)=>{
+            return{balls: prevState.balls.concat(ballArray)}
+        })
         for(let i=0; i<ballArray.length; i++){
         ballArray[i].update();
         }
     }
-
-    // placeWhite = (event) => {
-    //     if(220-event.clientX<=50&&220-event.clientX>=0&&400-event.clientY<=50&&400-event.clientY>=-50){
-    //         const white = new Ball('white',event.clientX,event.clientY);
+    placeWhite = (event) => {
+        const table = document.getElementById('table');
+        const canvas = table.getContext('2d');
+        const xPos = event.clientX-(window.innerWidth-800)/2;
+        console.log(this.state.white);
+        if(220-xPos<=50&&220-xPos>=0&&250-event.clientY<=50&&250-event.clientY>=-50){
+            console.log(event.clientY)
             
-    //         this.state.
-    //     }
-    // }
-    loadTable = (canvas) => {
+            const whitey = new Ball('white',xPos,event.clientY,canvas);
+            console.log(whitey.y)
+            whitey.update();
+            this.setState((prevState)=>{
+               return {white: !prevState.white} 
+            })
+            this.setState((prevState)=>{
+                return {balls: prevState.balls.concat([whitey])}
+            })
+            this.setState({whitey: whitey});
+            // let poolC = new Image();
+            // poolC.src={cue}
+            // poolC.addEventListener("load", ()=>{
+            //     console.log('yes');
+            //     canvas.drawImage(poolC,whitey.x,whitey.y, 400,250);
+                
+            // },false)
+            
+            // console.log(cue);
+            }
+            else{
+                canvas.fillText('PLACE WHITE IN D', 400,250)
+            }
+    }
+    handleCue = (event) => {
         
-        //Width of coloured balls
+        const table = document.getElementById('table');
+        const canvas = table.getContext('2d');
+        const xPos = event.clientX-(window.innerWidth-800)/2;
+        const yPos = event.clientY;
+        
+        const angle = Math.atan((this.state.whitey.y-yPos)/(this.state.whitey.x-xPos));
+        this.setState({xPos: xPos, yPos: yPos, ang: angle})
+
+        
+    }
+    loadTable = (canvas) => {
         const ballWidth = (50/3+25/24);
+        //Width of coloured balls
+        this.drawTable(ballWidth, canvas);
+        this.rackUp(ballWidth, canvas);
+    }
+
+    drawTable = (ballWidth,canvas) => {
         //Distance between cushions on corner pockets
         const pWidth = ballWidth*1.6;
         //radius of pocket
@@ -165,22 +211,31 @@ class Game extends React.Component {
         canvas.closePath();
         canvas.fillStyle="black";
         canvas.fill();
-        this.rackUp(ballWidth, canvas);
+    }
+    testPos = () => {
+        console.log(Cue.innerHeight)
+        console.log(Cue.innerWidth);
     }
     render() {
-        const Canvas = styled.canvas`
-        background-color: black;
-        display:block;
-        margin:auto;
-    `
+        
         return(
             <main>
-                <Canvas id="table" 
+                <Canvas id="table"
                         width="800" 
                         height="500" 
-                        onClick={this.state.white===false ? this.placeWhite : null}
+                        onClick={this.state.white===false ? this.placeWhite : this.testPos}
+                        onMouseMove={this.state.white===true ? this.handleCue: null}
                         >
-                        <h1>WHOOPS! YOUR PROVIDER CAN'T HACK IT! GET ON CHROME WITH THE REST OF HUMANITY</h1></Canvas>
+                        <h1>WHOOPS! YOUR PROVIDER CAN'T HACK IT! GET ON CHROME WITH THE REST OF HUMANITY</h1>
+                </Canvas>
+                <Cue src={this.state.white===true ? cue : null}
+                     xPos={(window.innerWidth-800)/2+this.state.whitey.x-this.state.whitey.radius}
+                     yPos={this.state.whitey.y-this.state.whitey.radius-5}
+
+                    //  ang={this.state.ang}
+                    //  wxPos={this.state.whitey.x}
+                    //  wyPos={this.state.whitey.y}
+                     />
             </main>
         )
     }
