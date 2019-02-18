@@ -25,7 +25,7 @@ class App extends Component {
   }
   render() {
     return (
-      <div className="App">
+      <main className="App">
         <header className="App-header">
         
         </header>
@@ -33,7 +33,7 @@ class App extends Component {
         <Welcome handlePlay={this.toggleWelcome}/> :
         <Game />
         }
-      </div>
+      </main>
     );
   }
 }

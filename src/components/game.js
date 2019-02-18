@@ -1,22 +1,32 @@
 import React from 'react';
 import Ball from './Ball'
 import cue from '../img/cue.png'
-import {Canvas, Cue, GameWrapper} from './styled'
+import {Canvas, Cue, GameWrapper, PowerBar,PowerMeter} from './styled'
 
 
 class Game extends React.Component {
-    state={
-        white: false,
-        whitey: '',
-        balls: [ ],
-        xPos: '',
-        yPos: '',
-        ang: ''
+    constructor(props){
+        super(props)
+        this.state={
+            white: false,
+            whitey: '',
+            cue: false,
+            aim: false,
+            meter: 100,
+            shoot: false,
+            aimX: 0,
+            aimY: 0,
+            balls: [ ],
+            xPos: '',
+            yPos: '',
+            ang: ''
         }
-        
+        this.table= React.createRef()
+            }
+    
     componentDidMount = () => {
-        const table = document.getElementById('table');
-        const canvas = table.getContext('2d');
+       
+        const canvas = this.table.current.getContext('2d');
         this.loadTable(canvas);
     }
     rackUp =(ballWidth, canvas) => {
@@ -45,69 +55,6 @@ class Game extends React.Component {
         ballArray[i].update();
         }
     }
-    placeWhite = (event) => {
-        const table = document.getElementById('table');
-        const canvas = table.getContext('2d');
-        const xPos = event.clientX-(window.innerWidth-800)/2;
-        if(220-xPos<=50&&220-xPos>=0&&250-event.clientY<=50&&250-event.clientY>=-50){
-            
-            const whitey = new Ball('white',xPos,event.clientY,canvas);
-            console.log(event.clientY);
-            whitey.update();
-            this.setState((prevState)=>{
-               return {white: !prevState.white} 
-            })
-            this.setState((prevState)=>{
-                return {balls: prevState.balls.concat([whitey])}
-            })
-            this.setState({whitey: whitey});
-            }
-            else{
-                canvas.fillText('PLACE WHITE IN D', 400,250)
-            }
-    }
-    handleCue = (event) => {
-        
-        const table = document.getElementById('table');
-        const canvas = table.getContext('2d');
-        const xPos = event.clientX-(window.innerWidth-800)/2;
-        const yPos = event.clientY;
-
-        const x = this.state.whitey.x-xPos;
-        const y = this.state.whitey.y-yPos
-        this.setState({xPos: xPos, yPos: yPos, ang: this.polarCoordinates(x,y)})
-
-        
-    }
-    polarCoordinates=(x,y)=>{
-        let angle =0;
-        if(x===0 && y<0){
-            angle =Math.PI/2
-        }
-        else if(x===0 && y>0){
-            angle = 3*Math.PI/2
-        }
-        else if(x>=0 && y>=0){
-            angle = Math.PI + Math.atan(y/x);
-        }
-        else if(x<=0 && y>0){
-            angle = Math.atan(y/x)
-        }
-        else if(x<=0 && y<=0){
-            angle = Math.atan(y/x)
-        }
-        else if (x>=0 && y<0){
-            angle = Math.PI +Math.atan(y/x)
-        }
-        return angle;
-    }
-    loadTable = (canvas) => {
-        const ballWidth = (50/3+25/24);
-        //Width of coloured balls
-        this.drawTable(ballWidth, canvas);
-        this.rackUp(ballWidth, canvas);
-    }
-
     drawTable = (ballWidth,canvas) => {
         //Distance between cushions on corner pockets
         const pWidth = ballWidth*1.6;
@@ -223,6 +170,109 @@ class Game extends React.Component {
         canvas.fillStyle="black";
         canvas.fill();
     }
+    loadTable = (canvas) => {
+        const ballWidth = (50/3+25/24);
+        //Width of coloured balls
+        this.drawTable(ballWidth, canvas);
+        this.rackUp(ballWidth, canvas);
+    }
+    placeWhite = (event) => {
+        const canvas = this.table.current.getContext('2d');
+        const xPos = event.clientX-(window.innerWidth-800)/2;
+        if(220-xPos<=50&&220-xPos>=0&&250-event.clientY<=50&&250-event.clientY>=-50){
+            
+            const whitey = new Ball('white',xPos,event.clientY,canvas);
+            console.log(event.clientY);
+            whitey.update();
+            this.setState((prevState)=>{
+               return {white: !prevState.white} 
+            })
+            this.setState((prevState)=>{
+                return {cue: !prevState.cue} 
+             })
+            this.setState((prevState)=>{
+                return {balls: prevState.balls.concat([whitey])}
+            })
+            this.setState({whitey: whitey});
+            }
+            else{
+                canvas.fillText('PLACE WHITE IN D', 400,250)
+            }
+    }
+    handleCue = (event) => {
+        const xPos = event.clientX-(window.innerWidth-800)/2;
+        const yPos = event.clientY;
+
+        const x = this.state.whitey.x-xPos;
+        const y = this.state.whitey.y-yPos
+        this.setState({xPos: xPos, yPos: yPos, ang: this.polarCoordinates(x,y)})
+    }
+    polarCoordinates=(x,y)=>{
+        let angle =0;
+        if(x===0 && y<0){
+            angle =Math.PI/2
+        }
+        else if(x===0 && y>0){
+            angle = 3*Math.PI/2
+        }
+        else if(x>=0 && y>=0){
+            angle = Math.PI + Math.atan(y/x);
+        }
+        else if(x<=0 && y>0){
+            angle = Math.atan(y/x)
+        }
+        else if(x<=0 && y<=0){
+            angle = Math.atan(y/x)
+        }
+        else if (x>=0 && y<0){
+            angle = Math.PI +Math.atan(y/x)
+        }
+        return angle;
+    }
+    toggleAim = () => {
+        if(this.state.aim){
+            this.setState({aimX: 10*Math.cos(this.state.ang),aimY: 10*Math.sin(this.state.ang)});
+        }
+        else{
+            this.setState({aimX: -100*Math.cos(this.state.ang),aimY: -100*Math.sin(this.state.ang)});
+        }
+        this.setState((prevState)=>{
+            return{aim: !prevState.aim}
+        })
+    }
+    powerMeter=()=>{
+        const startCount = Date.now();
+        this.timer = setInterval(()=>{
+            this.setState(()=>{
+                return({meter:100+100*Math.sin((Date.now()-startCount)/100)})
+            })
+        },1)
+    }
+    stopMeter=()=>{
+        clearInterval(this.timer);
+    }
+    aimWrap=()=>{
+       this.toggleAim();
+       this.powerMeter(); 
+    }
+    shoot = () => {
+        console.log('here')
+        this.setState((prevState)=>{
+            return {cue: !prevState.cue}
+        })
+        this.setState((prevState)=>{
+            return {shoot: !prevState.shoot}
+        })
+
+    }
+    shootWrap = () => {
+        this.stopMeter();
+        this.toggleAim();
+        setTimeout(()=>{
+            this.shoot();
+        },100)
+        
+    }
     testPos = () => {
     }
     render() {
@@ -230,19 +280,32 @@ class Game extends React.Component {
         return(
             <GameWrapper>
                 <Canvas id="table"
+                        ref={this.table}
                         width="800" 
                         height="500" 
                         onClick={this.state.white===false ? this.placeWhite : null}
-                        onMouseMove={this.state.white===true ? this.handleCue: null}
+                        onMouseDown={this.state.white===true? this.aimWrap : null}
+                        onMouseUp={this.state.aim===true? this.shootWrap: null}
+                        onMouseMove={this.state.white===true
+                                    &&this.state.aim===false
+                                    &&this.state.shoot===false
+                                    ? this.handleCue: null}
                         >
                         <h1>WHOOPS! YOUR PROVIDER CAN'T HACK IT! GET ON CHROME WITH THE REST OF HUMANITY</h1>
                 </Canvas>
-                <Cue src={this.state.white===true ? cue : null}
-                     xPos={(window.innerWidth-800)/2+this.state.whitey.x-this.state.whitey.radius}
-                     yPos={this.state.whitey.y-475*5/389}
+                {this.state.aim===true ?
+                    <PowerBar >
+                        <PowerMeter meter={this.state.meter}/>
+                    </PowerBar>: null
+                }
+                
+                <Cue src={this.state.cue===true ? cue : null}
+                     xPos={(window.innerWidth-800)/2+this.state.whitey.x+this.state.aimX-this.state.whitey.radius}
+                     yPos={this.state.whitey.y+this.state.aimY-475*5/389}
                      ang={this.state.ang}
                      rad={this.state.whitey.radius}
                      />
+                     
             </GameWrapper>
         )
     }

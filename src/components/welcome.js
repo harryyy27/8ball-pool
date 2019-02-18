@@ -1,13 +1,13 @@
 import React from 'react';
-import styled from 'styled-components';
+import {Title, StartGame} from './styled';
 
 const Welcome = (props) => {
     
     return(
-        <main>
-            <h1>Welcome</h1>
-            <button onClick={props.handlePlay}>PLAY</button>
-        </main>
+        <>
+            <Title>8 Ball Pool!</Title>
+            <StartGame onClick={props.handlePlay}>PLAY</StartGame>
+        </>
     );
 }
 export default Welcome;
