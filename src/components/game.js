@@ -291,7 +291,7 @@ class Game extends React.Component {
                                     &&this.state.shoot===false
                                     ? this.handleCue: null}
                         >
-                        <h1>WHOOPS! YOUR PROVIDER CAN'T HACK IT! GET ON CHROME WITH THE REST OF HUMANITY</h1>
+                        <h1>WHOOPS! YOUR PROVIDER CAN'T HACK IT!</h1>
                 </Canvas>
                 {this.state.aim===true ?
                     <PowerBar >
