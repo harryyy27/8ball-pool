@@ -33,7 +33,7 @@ class Game extends React.Component {
     }
     rackUp =() => {
         const canvas = this.ballpit.current.getContext('2d');
-        
+        console.log(this.state.balls);
         const xDev = ballWidth*Math.cos(Math.PI/6)
         const yDev = ballWidth*1/2;
         const ballArray = [];
@@ -264,6 +264,9 @@ class Game extends React.Component {
         const ballpit = this.ballpit.current.getContext('2d');
         ballpit.clearRect(0,0,800,500)
         // this.ballpit.getContext('2d').requestAnimationFrame(animate);
+        console.log(this.state.balls);
+        let ballArray = [...this.state.balls];
+        console.log(ballArray);
         for(let i=0; i<this.state.balls.length; i++){
             this.state.balls[i].update(this.state.balls);
         }

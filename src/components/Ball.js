@@ -1,4 +1,4 @@
-import {polarCoordinates, resolveCushions, distance,posIntersect,negIntersect} from './maths'
+import {polarCoordinates, resolveCushions, distance,posIntersect,negIntersect,rotVelocity,ballCollision} from './maths'
 import {Cush,pWidth,pRadius,cWidth,ballWidth} from './cushions';
 
 class Ball {
@@ -17,6 +17,7 @@ class Ball {
         this.dx=0;
         this.ddy=0.985;
         this.ddx=0.985;
+        this.mass=1;
         this.potted = false;
         this.draw= () => {
             this.canvas.beginPath();
@@ -28,16 +29,73 @@ class Ball {
     }
         this.update= (balls) => {
             //Distance between cushions on corner pockets
+            
         const pWidth = this.radius*1.6;
         //radius of pocket
         const pRadius= pWidth+Math.cos(Math.PI/4);
         //cushion width
         const cWidth = (50-pRadius)/2;
         //draw outline of pool table
+        function ballCollision(particle, otherParticle) {
+            
+        
+            // Prevent accidental overlap of particles
+            
+        }
             if(this.potted===false){
-                //collision detection left and right cushions
+                // collision detection left and right cushions
+                
                 let fPosX =this.x+this.dx;
                 let fPosY = this.y+this.dy;
+                if(balls !== undefined){
+                for(let i = 0; i<balls.length; i++){
+                    if(balls[i].potted===false){
+                    if(distance(this.x,this.y,balls[i].x,balls[i].y)!==0){
+                            if(distance(this.x,this.y,balls[i].x,balls[i].y)<balls[i].radius+this.radius){
+                                const xVelocityDiff = this.dx - balls[i].dx;
+                                const yVelocityDiff = this.dy - balls[i].dy;
+                            
+                                const xDist = balls[i].x - this.x;
+                                const yDist = balls[i].y - this.y;
+                                if (xVelocityDiff * xDist + yVelocityDiff * yDist >= 0) {
+        
+                                    // Grab angle between the two colliding particles
+                                    const angle = -Math.atan2(balls[i].y - this.y, balls[i].x - this.x);
+                            
+                                    // Store mass in var for better readability in collision equation
+                                    const m1 = this.mass;
+                                    const m2 = balls[i].mass;
+                            
+                                    // Velocity before equation
+                                    
+                                    const u1 = rotVelocity(this.dx, this.dy, angle);
+                                    
+                                    const u2 = rotVelocity(balls[i].dx, balls[i].dy, angle);
+                                   
+                            
+                                    // Velocity after 1d collision equation
+                                    const v1 = { x: u1.u * (m1 - m2) / (m1 + m2) + u2.u * 2 * m2 / (m1 + m2), y: u1.v };
+                                    const v2 = { x: u2.u * (m1 - m2) / (m1 + m2) + u1.u * 2 * m2 / (m1 + m2), y: u2.v };
+                            
+                                    // Final velocity after rotating axis back to original location
+                                    const vFinal1 = rotVelocity(v1.x, v1.y, -angle);
+                                    const vFinal2 = rotVelocity(v2.x, v2.y, -angle);
+                            
+                                    // Swap particle velocities for realistic bounce effect
+                                    this.dx = vFinal1.u;
+                                    this.dy = vFinal1.v;
+                            
+                                    balls[i].dx = vFinal2.u;
+                                    balls[i].dy = vFinal2.v;
+                                }
+                            }
+                        }
+                        
+                        }
+                    }
+                }
+                
+                
                 const C = Cush;
                 if(fPosX-this.radius<100 || fPosX+this.radius>700){
                     if(fPosY<C.R.BLy && fPosY>C.R.TLy){
@@ -108,6 +166,7 @@ class Ball {
                     //sound effect
                 }
                 //collision detection
+                
                 if(fPosY-this.radius<100 || fPosY+this.radius>400){
                     if(fPosX>C.BL.TLx && fPosX<C.BR.TRx){
                         if(fPosX<=C.BL.TRx|| fPosX>=C.BR.TLx){
