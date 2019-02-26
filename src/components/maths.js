@@ -44,7 +44,7 @@ const resolveCushions=(dx,dy, angle)=>{
 }
 const posIntersect = (x1,y1,x2,y2) => {
     //x1 y1 start of straight cushion
-    const c1 = y1+x1;
+    const c1 = y1-x1;
     const c2 = y2-x2;
     const I = (c2-c1)/2;
     return {

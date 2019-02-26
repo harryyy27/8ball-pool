@@ -306,17 +306,11 @@ class Game extends React.Component {
                                     &&this.state.aim===false
                                     &&this.state.shoot===false
                                     ? this.handleCue: null}
-<<<<<<< HEAD
 
                 
                 >
                         <h1>DOUBLE WHOOPS!</h1>
                 </Ballpit>
-=======
-                        >
-                        <h1>WHOOPS! YOUR PROVIDER CAN'T HACK IT!</h1>
-                </Canvas>
->>>>>>> 8645cd8a7378d9c89d151156f1be084d4a656f51
                 {this.state.aim===true ?
                     <PowerBar >
                         <PowerMeter meter={this.state.meter}/>
