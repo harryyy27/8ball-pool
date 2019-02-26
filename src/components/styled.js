@@ -14,12 +14,20 @@ const StartGame = styled.button`
     display: block;
     margin: auto;
 `
-const Canvas = styled.canvas`
+const Table = styled.canvas`
     background-color: black;
     display:block;
     margin:auto;
     overflow:hidden;
+    z-index: -1;
     `
+const Ballpit = styled.canvas`
+    position:absolute;
+    top: 0px;
+    background: rgba()
+    
+    margin: auto;
+`
 
 const Cue = styled.img`
     width: 475px;
@@ -28,7 +36,7 @@ const Cue = styled.img`
     left: ${props=> props.xPos-475}px
     transform: rotate(${props=> props.ang*360/(2*Math.PI)}deg);
     transform-origin: ${props=> (props.rad+475)*100/475}% 50%;
-    transform: translate()
+    transition: top,left ${props=> 1/props.meter}s linear;
     
 `
 const PowerBar = styled.div`
@@ -55,4 +63,4 @@ const GameWrapper= styled.main`
     overflow-y: hidden;
     margin: auto;
 `
-export { Canvas, Cue, PowerBar, PowerMeter, GameWrapper, Title, StartGame}
+export { Ballpit, Table, Cue, PowerBar, PowerMeter, GameWrapper, Title, StartGame}
